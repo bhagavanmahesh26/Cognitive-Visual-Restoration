@@ -1,0 +1,1 @@
+Developed an AI-powered web application that colorizes black-and-white images using ECCV16 & SIG-GRAPH17 models, achieving realistic output on 95%+ of test images. Built a Flask backend with HTML/CSS/JS frontend supporting user authentication, reducing colorization time to under 3 seconds per image.
