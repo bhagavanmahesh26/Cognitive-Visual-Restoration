@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Team - Cognitive Visual Restoration{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1 class="home-heading-enhance">Our Team</h1>
+    <p>Meet the talented individuals behind the Cognitive Visual Restoration Engine</p>
+</div>
+
+<div class="container">
+
+    <!-- Section Header -->
+    <div class="team-section-header">
+        <div class="scope-eyebrow scope-eyebrow--purple">👥 The People Behind CVR</div>
+        <h2 class="scope-section-title team-gradient-title">Brilliant Minds, One Vision</h2>
+        <p class="scope-section-subtitle">
+            A team of final-year engineering students united by curiosity, a love for AI,
+            and the drive to build something meaningful as our first major project.
+        </p>
+    </div>
+
+    <!-- Stats Strip -->
+    <div class="team-stats mb-4">
+        <div class="tm-stat">
+            <span class="tm-stat-num">5</span>
+            <span class="tm-stat-label">Team Members</span>
+        </div>
+        <div class="tm-stat-sep">|</div>
+        <div class="tm-stat">
+            <span class="tm-stat-num">3+</span>
+            <span class="tm-stat-label">Specializations</span>
+        </div>
+        <div class="tm-stat-sep">|</div>
+        <div class="tm-stat">
+            <span class="tm-stat-num">1K+</span>
+            <span class="tm-stat-label">Hours of Work</span>
+        </div>
+        <div class="tm-stat-sep">|</div>
+        <div class="tm-stat">
+            <span class="tm-stat-num">1</span>
+            <span class="tm-stat-label">Shared Mission</span>
+        </div>
+    </div>
+
+    <!-- Row 1: 3 Members -->
+    <div class="team-grid-3 mb-3">
+        {% for member in team_members[:3] %}
+        <div class="tm-card" style="--tmi: {{ loop.index0 }}">
+            <div class="tm-card-bg"></div>
+            <div class="tm-card-shine"></div>
+
+            <div class="tm-avatar-wrap">
+                <div class="tm-avatar-ring"></div>
+                <div class="tm-avatar">
+                    {% if loop.index == 1 %}
+                    <div class="tm-avatar-initials tm-av--cyan-purple">TM</div>
+                    {% elif loop.index == 2 %}
+                    <div class="tm-avatar-initials tm-av--blue-cyan">MB</div>
+                    {% elif loop.index == 3 %}
+                    <div class="tm-avatar-initials tm-av--purple-pink">VA</div>
+                    {% endif %}
+                </div>
+                <div class="tm-avatar-pulse"></div>
+            </div>
+
+            <div class="tm-info">
+                <h3 class="tm-name">{{ member.name }}</h3>
+                <span class="tm-role">{{ member.role }}</span>
+                <p class="tm-desc">{{ member.description }}</p>
+                <div class="tm-expertise">{{ member.expertise }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Row 2: 2 Members Centered -->
+    <div class="team-grid-2-centered mb-4">
+        {% for member in team_members[3:] %}
+        <div class="tm-card" style="--tmi: {{ loop.index0 + 3 }}">
+            <div class="tm-card-bg"></div>
+            <div class="tm-card-shine"></div>
+
+            <div class="tm-avatar-wrap">
+                <div class="tm-avatar-ring"></div>
+                <div class="tm-avatar">
+                    {% if loop.index == 1 %}
+                    <div class="tm-avatar-initials tm-av--orange-yellow">DS</div>
+                    {% elif loop.index == 2 %}
+                    <div class="tm-avatar-initials tm-av--green-cyan">IA</div>
+                    {% endif %}
+                </div>
+                <div class="tm-avatar-pulse"></div>
+            </div>
+
+            <div class="tm-info">
+                <h3 class="tm-name">{{ member.name }}</h3>
+                <span class="tm-role">{{ member.role }}</span>
+                <p class="tm-desc">{{ member.description }}</p>
+                <div class="tm-expertise">{{ member.expertise }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Why We Excel -->
+    <div class="team-excel-section mb-4">
+        <div class="team-excel-header">
+            <div class="scope-eyebrow scope-eyebrow--cyan">⭐ What Sets Us Apart</div>
+            <h2 class="scope-section-title"
+                style="background: linear-gradient(135deg,#fff 20%,var(--neon-cyan) 60%,var(--neon-purple) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+                Why Our Team Excels</h2>
+        </div>
+        <div class="team-excel-grid">
+            <div class="excel-card" style="--ei:0">
+                <div class="excel-icon excel-icon--cyan">🎓</div>
+                <h3 class="excel-title">Eager to Learn</h3>
+                <p class="excel-desc">As final-year engineering students, we dove deep into machine learning,
+                    computer vision, and web development to build this project from the ground up.</p>
+            </div>
+            <div class="excel-card" style="--ei:1">
+                <div class="excel-icon excel-icon--purple">🤝</div>
+                <h3 class="excel-title">Great Teamwork</h3>
+                <p class="excel-desc">We split responsibilities across ML, frontend, backend, and design —
+                    collaborating closely and supporting each other throughout every challenge.</p>
+            </div>
+            <div class="excel-card" style="--ei:2">
+                <div class="excel-icon excel-icon--green">🚀</div>
+                <h3 class="excel-title">First-Time Builders</h3>
+                <p class="excel-desc">This is our first end-to-end AI project. We embraced every hurdle —
+                    from understanding deep learning papers to deploying a working Flask web app.</p>
+            </div>
+            <div class="excel-card" style="--ei:3">
+                <div class="excel-icon excel-icon--pink">💡</div>
+                <h3 class="excel-title">Shared Passion</h3>
+                <p class="excel-desc">Driven by genuine curiosity about AI and a desire to create something
+                    useful, we channeled our enthusiasm into building a real, working colorization engine.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

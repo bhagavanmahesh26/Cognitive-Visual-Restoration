@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Scope - Cognitive Visual Restoration{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1 class="home-heading-enhance">Project Scope</h1>
+    <p>Exploring the future potential and scalability of chromatic enhancement technology</p>
+</div>
+
+<div class="container">
+    <div class="glass-card mb-4">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <div class="scope-eyebrow scope-eyebrow--green" style="display: inline-block;">🌍 Impact Across Industries
+            </div>
+            <h2 class="scope-section-title rwa-title" style="margin-top: 0.5rem;">Real-World Applications</h2>
+            <p class="scope-section-subtitle" style="margin: 0 auto;">
+                From cultural heritage preservation to cutting-edge scientific research — CVR Engine
+                transforms industries by breathing vibrant life into black-and-white visual history.
+            </p>
+        </div>
+        <div class="grid grid-3">
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/books.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Education</h3>
+                <p style="color: var(--text-secondary);">
+                    Enhance historical textbooks and educational materials
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/camera.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Entertainment</h3>
+                <p style="color: var(--text-secondary);">
+                    Restore classic films and television shows
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/family.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Personal</h3>
+                <p style="color: var(--text-secondary);">
+                    Bring old family photos back to life
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/building.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Corporate</h3>
+                <p style="color: var(--text-secondary);">
+                    Enhance archival business documentation
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/microscope.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Research</h3>
+                <p style="color: var(--text-secondary);">
+                    Aid scientific visualization and analysis
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/palette.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Creative</h3>
+                <p style="color: var(--text-secondary);">
+                    Support artists and designers in their work
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Scalability -->
+    <div class="scalability-section mb-4">
+        <div class="scalability-header">
+            <div class="scope-eyebrow scope-eyebrow--cyan">📈 Technical Implementation</div>
+            <h2 class="scope-section-title">Technical Architecture &amp; Performance</h2>
+            <p class="scope-section-subtitle">
+                Built for reliability — the CVR Engine is designed with clean architecture,
+                efficient model inference, and a user-friendly Flask web interface.
+            </p>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="scalability-stats">
+            <div class="sc-stat">
+                <span class="sc-stat-num">HD</span>
+                <span class="sc-stat-label">Max Resolution</span>
+            </div>
+            <div class="sc-stat-sep">|</div>
+            <div class="sc-stat">
+                <span class="sc-stat-num">&lt;3s</span>
+                <span class="sc-stat-label">Inference Time</span>
+            </div>
+            <div class="sc-stat-sep">|</div>
+            <div class="sc-stat">
+                <span class="sc-stat-num">95%+</span>
+                <span class="sc-stat-label">Colorization Accuracy</span>
+            </div>
+            <div class="sc-stat-sep">|</div>
+            <div class="sc-stat">
+                <span class="sc-stat-num">Flask</span>
+                <span class="sc-stat-label">Web Framework</span>
+            </div>
+        </div>
+
+        <!-- Cards grid -->
+        <div class="scalability-grid">
+            <div class="sc-card" style="--sc-i:0">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/gpu.json') }}" background="transparent"
+                        speed="1" style="width:90px;height:90px;" loop autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">GPU / CPU</span>
+                    <h3 class="sc-title">⚡ High-Performance Computing</h3>
+                    <p class="sc-desc">Leverages GPU acceleration for deep learning inference, enabling fast
+                        colorization of standard resolution images within seconds.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:1">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/load_balance.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">Architecture</span>
+                    <h3 class="sc-title">⚖️ Modular Design</h3>
+                    <p class="sc-desc">Built with a clean, modular architecture separating the model inference
+                        pipeline from the web layer for easy maintenance and future extension.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:2">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/cloud_network.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">Deployment</span>
+                    <h3 class="sc-title">🌐 Web-Based Access</h3>
+                    <p class="sc-desc">Served as a Flask web application, accessible from any browser without
+                        requiring local model installation by the end user.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:3">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/optimization.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">ML Optimization</span>
+                    <h3 class="sc-title">🔧 Model Optimization</h3>
+                    <p class="sc-desc">Applied fine-tuning and layer optimization techniques to reduce inference
+                        time while maintaining high colorization quality.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:4">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/container.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">Storage</span>
+                    <h3 class="sc-title">📦 File Management</h3>
+                    <p class="sc-desc">Handles uploaded and colorized images with secure local storage, organized
+                        folder structure, and automatic cleanup to manage disk space efficiently.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:5">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/database.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">Storage</span>
+                    <h3 class="sc-title">💾 Local Image Storage</h3>
+                    <p class="sc-desc">Uploaded and colorized images are stored in organized local folders
+                        (<code>static/uploads</code> and <code>static/colorized</code>) with timestamp-based
+                        naming to avoid conflicts.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:6">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/analytics.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">Observability</span>
+                    <h3 class="sc-title">📊 Logging &amp; Monitoring</h3>
+                    <p class="sc-desc">Flask's built-in logging tracks upload, inference, and error events,
+                        helping debug and improve system reliability during development.</p>
+                </div>
+            </div>
+
+            <div class="sc-card" style="--sc-i:7">
+                <div class="sc-card-glow"></div>
+                <div class="sc-lottie">
+                    <lottie-player src="{{ url_for('static', filename='lottie/security.json') }}"
+                        background="transparent" speed="1" style="width:90px;height:90px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div class="sc-card-content">
+                    <span class="sc-tag">Security</span>
+                    <h3 class="sc-title">🔒 Security &amp; Data Privacy</h3>
+                    <p class="sc-desc">Session-based authentication ensures only logged-in users can access the
+                        colorization engine. Uploaded images are stored securely and not shared.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Future Enhancements -->
+    <div class="future-section mb-4">
+        <div class="future-header">
+            <div class="scope-eyebrow scope-eyebrow--purple">🚀 What's Coming Next</div>
+            <h2 class="scope-section-title">Future Enhancements</h2>
+            <p class="scope-section-subtitle">
+                The CVR Engine is designed with extensibility in mind — paving the way for advanced features
+                and broader applications in AI-driven image restoration.
+            </p>
+        </div>
+
+        <div class="future-roadmap">
+            <div class="future-item" style="--fi:0">
+                <div class="future-icon-wrap future-icon--yellow">⚡</div>
+                <div class="future-body">
+                    <div class="future-phase">Phase 1</div>
+                    <h3 class="future-title">Real-Time Processing</h3>
+                    <p class="future-desc">GPU-accelerated inference pipelines for instant colorization, enabling live
+                        preview and real-time video stream processing with minimal latency.</p>
+                    <div class="future-tags">
+                        <span class="future-tag">GPU Inference</span>
+                        <span class="future-tag">Live Preview</span>
+                        <span class="future-tag">Video Streams</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="future-item" style="--fi:1">
+                <div class="future-icon-wrap future-icon--purple">🧠</div>
+                <div class="future-body">
+                    <div class="future-phase">Phase 2</div>
+                    <h3 class="future-title">Advanced AI Models</h3>
+                    <p class="future-desc">Integrate transformer-based architectures and diffusion models for
+                        photorealistic colorization with enhanced detail preservation and context awareness.</p>
+                    <div class="future-tags">
+                        <span class="future-tag">Transformers</span>
+                        <span class="future-tag">Diffusion Models</span>
+                        <span class="future-tag">Context Awareness</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="future-item" style="--fi:2">
+                <div class="future-icon-wrap future-icon--pink">🎨</div>
+                <div class="future-body">
+                    <div class="future-phase">Phase 2</div>
+                    <h3 class="future-title">User Customization</h3>
+                    <p class="future-desc">Allow users to guide colorization through reference images, color palettes,
+                        or text prompts — providing creative control over the final output.</p>
+                    <div class="future-tags">
+                        <span class="future-tag">Reference Image</span>
+                        <span class="future-tag">Color Palette</span>
+                        <span class="future-tag">Text Prompts</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="future-item" style="--fi:3">
+                <div class="future-icon-wrap future-icon--orange">📦</div>
+                <div class="future-body">
+                    <div class="future-phase">Phase 3</div>
+                    <h3 class="future-title">Batch Processing</h3>
+                    <p class="future-desc">Bulk upload and processing of multiple images simultaneously with progress
+                        tracking — perfect for archival projects and large-scale restoration tasks.</p>
+                    <div class="future-tags">
+                        <span class="future-tag">Bulk Upload</span>
+                        <span class="future-tag">Progress Tracking</span>
+                        <span class="future-tag">Archive Support</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="future-item" style="--fi:4">
+                <div class="future-icon-wrap future-icon--green">🔄</div>
+                <div class="future-body">
+                    <div class="future-phase">Phase 3</div>
+                    <h3 class="future-title">Multi-Format Support</h3>
+                    <p class="future-desc">Expand compatibility to support RAW image formats, TIFF, and high-resolution
+                        scans — catering to professional photographers and archivists.</p>
+                    <div class="future-tags">
+                        <span class="future-tag">RAW Format</span>
+                        <span class="future-tag">TIFF Support</span>
+                        <span class="future-tag">Hi-Res Scans</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="future-item" style="--fi:5">
+                <div class="future-icon-wrap future-icon--cyan">🌐</div>
+                <div class="future-body">
+                    <div class="future-phase">Phase 4</div>
+                    <h3 class="future-title">Cloud Integration</h3>
+                    <p class="future-desc">Seamlessly integrate with cloud storage services like Google Drive, Dropbox,
+                        and OneDrive for easy import/export and collaborative workflows.</p>
+                    <div class="future-tags">
+                        <span class="future-tag">Google Drive</span>
+                        <span class="future-tag">Dropbox</span>
+                        <span class="future-tag">OneDrive</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

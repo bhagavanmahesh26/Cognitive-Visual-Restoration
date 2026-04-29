@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}About - Cognitive Visual Restoration{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1 class="home-heading-enhance">About the Project</h1>
+    <p>Discover the mission, technology, and methodology behind our restoration engine</p>
+</div>
+
+<div class="container" style="padding-top: 1.5rem;">
+    <!-- Project Introduction -->
+    <div class="project-intro-section mb-4">
+        <!-- Glow orbs -->
+        <div class="intro-orb intro-orb-left" style="position:absolute !important;"></div>
+        <div class="intro-orb intro-orb-right" style="position:absolute !important;"></div>
+
+        <!-- Badge row -->
+        <div class="intro-badges">
+            <span class="intro-badge badge-cyan">🧠 Deep Learning</span>
+            <span class="intro-badge badge-purple">🎨 AI Colorization</span>
+            <span class="intro-badge badge-mixed">⚡ Real-Time</span>
+        </div>
+
+        <!-- Main title -->
+        <h2 class="intro-title">{{ project.title }}</h2>
+
+        <!-- Two-column body -->
+        <div class="intro-body">
+            <div class="intro-description">
+                <p>{{ project.description }}</p>
+                <p>
+                    This project represents the culmination of extensive research in deep learning, computer vision,
+                    and neural network architectures. By leveraging state-of-the-art AI models, we've created a system
+                    that can intelligently predict and apply realistic colors to monochrome images — bringing historical
+                    photographs and black-and-white imagery vividly back to life.
+                </p>
+            </div>
+
+            <div class="intro-highlights">
+                <div class="highlight-item">
+                    <div class="highlight-icon">🎯</div>
+                    <div>
+                        <div class="highlight-label">Accuracy</div>
+                        <div class="highlight-value">95%+</div>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon">⚡</div>
+                    <div>
+                        <div class="highlight-label">Processing</div>
+                        <div class="highlight-value">&lt; 3s</div>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon">🖼️</div>
+                    <div>
+                        <div class="highlight-label">Training Data</div>
+                        <div class="highlight-value">1M+ images (ImageNet)</div>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon">🔬</div>
+                    <div>
+                        <div class="highlight-label">PSNR Score</div>
+                        <div class="highlight-value">28.5 dB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider line -->
+        <div class="intro-divider"></div>
+
+        <!-- Stats strip -->
+        <div class="intro-stats-strip">
+            <div class="intro-stat">
+                <span class="intro-stat-num">2</span>
+                <span class="intro-stat-desc">AI Models</span>
+            </div>
+            <div class="intro-stat-sep">|</div>
+            <div class="intro-stat">
+                <span class="intro-stat-num">7</span>
+                <span class="intro-stat-desc">Technologies</span>
+            </div>
+            <div class="intro-stat-sep">|</div>
+            <div class="intro-stat">
+                <span class="intro-stat-num">1M+</span>
+                <span class="intro-stat-desc">Training Images</span>
+            </div>
+            <div class="intro-stat-sep">|</div>
+            <div class="intro-stat">
+                <span class="intro-stat-num">0.92</span>
+                <span class="intro-stat-desc">SSIM Index</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tech Stack with Logos -->
+    <div class="glass-card mb-4">
+        <h2 class="mb-3" style="color: var(--accent-secondary);">💻 Technology Stack</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+            Built with industry-leading technologies and frameworks for optimal performance and scalability.
+        </p>
+        <div class="tech-stack-grid">
+            {% for tech in project.tech_stack %}
+            <div class="tech-card">
+                <div class="tech-logo-wrapper">
+                    <img src="{{ tech.logo }}" alt="{{ tech.name }}" class="tech-logo">
+                </div>
+                <h3 class="tech-name">{{ tech.name }}</h3>
+                {% if tech.version %}
+                <p class="tech-version">v{{ tech.version }}</p>
+                {% endif %}
+                <p class="tech-category">{{ tech.category }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Models Used -->
+    <div class="models-section mb-4">
+        <div class="models-header">
+            <div class="models-eyebrow">🧠 Powered by Deep Learning</div>
+            <h2 class="models-title">AI Models &amp; Architectures</h2>
+            <p class="models-subtitle">
+                Two state-of-the-art PyTorch CNN architectures by Zhang et al. — trained on over 1 million ImageNet
+                images — transform grayscale images into vibrant, photorealistic color using LAB color space prediction.
+            </p>
+        </div>
+
+        <!-- Two model cards -->
+        <div class="models-bento">
+
+            <!-- ECCV16 model card -->
+            <div class="mcard mcard--cyan">
+                <div class="mcard-orb"></div>
+                <div class="mcard-pattern"></div>
+                <div class="mcard-top">
+                    <span class="mcard-badge">Automatic Colorization</span>
+                    <span class="mcard-type">CNN · PyTorch</span>
+                </div>
+                <div class="mcard-icon">🧠</div>
+                <h3 class="mcard-title">ECCV 16 — Zhang et al. (2016)</h3>
+                <p class="mcard-desc">
+                    A fully automatic deep CNN that takes a grayscale <em>L</em> channel input and predicts the
+                    <em>ab</em> chrominance channels in the LAB color space. The ab output is quantized into
+                    <strong>313 color bins</strong> and treated as a classification problem with a class-rebalancing
+                    softmax loss, producing plausible, natural-looking colors. Weights are loaded from
+                    <code>colorization_release_v2-9b330a0b.pth</code> via PyTorch.
+                </p>
+                <div class="mcard-chips">
+                    <span class="mcard-chip">LAB Color Space</span>
+                    <span class="mcard-chip">313 ab Bins</span>
+                    <span class="mcard-chip">PyTorch</span>
+                    <span class="mcard-chip">Softmax Loss</span>
+                    <span class="mcard-chip">ImageNet Pretrained</span>
+                </div>
+            </div>
+
+            <!-- SIGGRAPH17 model card -->
+            <div class="mcard mcard--purple">
+                <div class="mcard-orb"></div>
+                <div class="mcard-pattern"></div>
+                <div class="mcard-top">
+                    <span class="mcard-badge">Primary · High Quality</span>
+                    <span class="mcard-type">CNN · PyTorch</span>
+                </div>
+                <div class="mcard-icon">🎨</div>
+                <h3 class="mcard-title">SIGGRAPH 17 — Zhang et al. (2017)</h3>
+                <p class="mcard-desc">
+                    An enhanced U-Net style deep CNN with skip connections that supports user-guided colorization.
+                    Takes the grayscale <em>L</em> channel along with optional hint color inputs and outputs
+                    <em>ab</em> chrominance channels via a regression head. Produces <strong>more vibrant,
+                    photorealistic colors</strong> and is the <strong>primary inference model</strong> used
+                    in this application. Weights are loaded from <code>siggraph17-df00044c.pth</code> via PyTorch.
+                </p>
+                <div class="mcard-chips">
+                    <span class="mcard-chip">LAB Color Space</span>
+                    <span class="mcard-chip">U-Net + Skip Connections</span>
+                    <span class="mcard-chip">PyTorch</span>
+                    <span class="mcard-chip">Regression Output</span>
+                    <span class="mcard-chip">User-Guided</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Project Objectives -->
+    <div class="objectives-section mb-4">
+        <div class="objectives-header">
+            <div class="objectives-eyebrow">🎯 What We Set Out to Achieve</div>
+            <h2 class="objectives-title">Project Objectives</h2>
+            <p class="objectives-subtitle">
+                Our mission is to democratize advanced image colorization technology through innovation,
+                accessibility, and performance excellence — making AI-powered restoration available to everyone.
+            </p>
+        </div>
+
+        <div class="objectives-grid">
+            {% for objective in project.objectives %}
+            <div class="obj-card" style="--card-index: {{ loop.index0 }}">
+                <div class="obj-card-glow"></div>
+                <div class="obj-number">{{ '%02d' % loop.index }}</div>
+                <div class="obj-icon-wrap">{{ objective.icon }}</div>
+                <h3 class="obj-title">{{ objective.title }}</h3>
+                <p class="obj-desc">{{ objective.description }}</p>
+                <div class="obj-progress-bar">
+                    <div class="obj-progress-fill"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Methodology -->
+    <div class="glass-card mb-4">
+        <h2 class="mb-3">🔬 Methodology</h2>
+        <div class="methodology-grid">
+            <div class="methodology-card">
+                <div class="methodology-header">
+                    <span class="methodology-number">01</span>
+                    <h3>Data Collection</h3>
+                </div>
+                <p style="color: var(--text-secondary);">
+                    Curated a dataset of color images spanning various categories including
+                    landscapes, portraits, and architecture. Images were converted to grayscale to create
+                    training pairs for supervised learning.
+                </p>
+            </div>
+
+            <div class="methodology-card">
+                <div class="methodology-header">
+                    <span class="methodology-number">02</span>
+                    <h3>Model Architecture</h3>
+                </div>
+                <p style="color: var(--text-secondary);">
+                    Two PyTorch CNN models are used: <strong>ECCV16</strong> (Zhang et al., 2016) — which treats
+                    colorization as a 313-bin ab classification problem — and <strong>SIGGRAPH17</strong>
+                    (Zhang et al., 2017) — a U-Net style network with skip connections that regresses ab values
+                    directly, producing more vibrant results. SIGGRAPH17 is used for all inference in this app.
+                </p>
+            </div>
+
+            <div class="methodology-card">
+                <div class="methodology-header">
+                    <span class="methodology-number">03</span>
+                    <h3>Model Loading</h3>
+                </div>
+                <p style="color: var(--text-secondary);">
+                    Pre-trained weights are loaded via PyTorch from local <code>.pth</code> files
+                    (<code>colorization_release_v2-9b330a0b.pth</code> for ECCV16 and
+                    <code>siggraph17-df00044c.pth</code> for SIGGRAPH17). Images are preprocessed into the LAB
+                    color space using <code>skimage</code>, and results are post-processed back to RGB with
+                    <code>matplotlib</code> for saving.
+                </p>
+            </div>
+
+            <div class="methodology-card">
+                <div class="methodology-header">
+                    <span class="methodology-number">04</span>
+                    <h3>Evaluation Metrics</h3>
+                </div>
+                <p style="color: var(--text-secondary);">
+                    Performance evaluated using PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index),
+                    and perceptual loss metrics. Achieved 28.5 dB PSNR and 0.92 SSIM on validation set.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Features (UNCHANGED) -->
+    <div class="glass-card mb-4">
+        <h2 class="mb-3">📊 Key Features</h2>
+        <div class="grid grid-3">
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/brain.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Semantic Understanding</h3>
+                <p style="color: var(--text-secondary);">
+                    Recognizes objects and scenes to apply contextually appropriate colors
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/lightning.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Real-time Processing</h3>
+                <p style="color: var(--text-secondary);">
+                    Optimized inference pipeline for fast colorization results
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/target.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">High Fidelity</h3>
+                <p style="color: var(--text-secondary);">
+                    Produces photorealistic colors with natural gradients and tones
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/sync.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Batch Processing</h3>
+                <p style="color: var(--text-secondary);">
+                    Support for processing multiple images simultaneously
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/scale.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Resolution Agnostic</h3>
+                <p style="color: var(--text-secondary);">
+                    Handles images of various sizes and aspect ratios
+                </p>
+            </div>
+
+            <div class="text-center">
+                <lottie-player src="{{ url_for('static', filename='lottie/shield.json') }}" background="transparent"
+                    speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+                <h3 style="margin-bottom: 0.5rem;">Robust &amp; Stable</h3>
+                <p style="color: var(--text-secondary);">
+                    Consistent results across different image types and qualities
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

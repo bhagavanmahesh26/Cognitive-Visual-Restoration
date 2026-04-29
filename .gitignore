@@ -1,0 +1,28 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ML Model weights (too large for GitHub - 100MB limit)
+backend/models/
+
+# Generated/uploaded files (runtime data, not source code)
+frontend/static/colorized/
+frontend/static/uploads/
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Frames (optional - comment out if you want to push these)
+# frames_one/
+
+# IDE
+.vscode/
+.idea/

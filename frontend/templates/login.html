@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Cognitive Visual Restoration</title>
+    <meta name="description"
+        content="Sign in to Cognitive Visual Restoration — AI-powered image colorization platform.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: #06060a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── BACKGROUND: animated grayscale → color split ──────── */
+        #bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        /* ── TUBES CURSOR BACKGROUND CANVAS ────────────────────── */
+        #tubes-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Left half: forever grayscale old-photo vibes */
+        #bg-left {
+            position: absolute;
+            inset: 0 50% 0 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(160, 160, 160, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(100, 100, 100, 0.12) 0%, transparent 50%),
+                linear-gradient(160deg, #0d0d0d 0%, #1a1a1a 40%, #111 100%);
+            filter: grayscale(1) contrast(1.1);
+        }
+
+        /* Grainy photo texture on left */
+        #bg-left::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+            opacity: 0.35;
+        }
+
+        /* Right half: vivid colorized world */
+        #bg-right {
+            position: absolute;
+            inset: 0 0 0 50%;
+            background:
+                radial-gradient(ellipse at 80% 30%, rgba(99, 200, 255, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(255, 90, 200, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 60%, rgba(130, 255, 160, 0.12) 0%, transparent 40%),
+                linear-gradient(160deg, #04080f 0%, #0a1628 40%, #0d0a1e 100%);
+        }
+
+        /* Floating colour orbs on right — sits BEHIND cursor canvas */
+        #bg-right::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle 180px at 70% 25%, rgba(0, 220, 255, 0.15) 0%, transparent 70%),
+                radial-gradient(circle 140px at 30% 70%, rgba(255, 60, 180, 0.13) 0%, transparent 70%),
+                radial-gradient(circle 100px at 80% 75%, rgba(100, 255, 130, 0.1) 0%, transparent 70%);
+            animation: orbFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(-18px) scale(1.06);
+                opacity: 0.8;
+            }
+        }
+
+        /* Vertical divider — the "restoration line" */
+        #divider {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(0, 220, 255, 0.6) 20%,
+                    rgba(255, 255, 255, 0.9) 50%,
+                    rgba(255, 80, 200, 0.6) 80%,
+                    transparent 100%);
+            box-shadow: 0 0 20px rgba(0, 220, 255, 0.5), 0 0 40px rgba(255, 80, 200, 0.3);
+            z-index: 1;
+            animation: divGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes divGlow {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Floating photo strips in background */
+        .photo-strip {
+            position: fixed;
+            border-radius: 6px;
+            overflow: hidden;
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* B&W text labels in background */
+        .bg-label {
+            position: fixed;
+            font-family: 'Orbitron', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bg-label.bw {
+            left: 5%;
+            bottom: 8%;
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        .bg-label.color {
+            right: 5%;
+            bottom: 8%;
+            color: rgba(0, 220, 255, 0.3);
+        }
+
+        /* ── Page layout ────────────────────────────────────────── */
+        .page {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* ── Card ──────────────────────────────────────────────── */
+        .card {
+            position: relative;
+            width: 100%;
+            max-width: 430px;
+            /* Rich layered background: deep navy with a subtle top-center blue bloom */
+            background:
+                radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0, 180, 255, 0.07) 0%, transparent 70%),
+                linear-gradient(160deg, rgba(10, 14, 32, 0.97) 0%, rgba(4, 6, 18, 0.99) 100%);
+            border: 1px solid transparent;
+            background-clip: padding-box;
+            border-radius: 28px;
+            padding: 148px 42px 46px;
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            box-shadow:
+                0 0 0 1px rgba(0, 200, 255, 0.12),
+                0 0 0 3px rgba(140, 0, 255, 0.06),
+                0 50px 140px rgba(0, 0, 0, 0.85),
+                0 0 80px rgba(0, 160, 255, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            animation: cardIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+            text-align: center;
+        }
+
+        /* Glowing animated border ring */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 29px;
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.35), rgba(120, 0, 255, 0.2), rgba(0, 210, 255, 0.1));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: destination-out;
+            padding: 1px;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.93);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Shake on error */
+        .card.shake {
+            animation: shake 0.5s ease-in-out;
+            border-color: rgba(255, 60, 80, 0.5) !important;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            15%,
+            55%,
+            85% {
+                transform: translateX(-10px);
+            }
+
+            30%,
+            70%,
+            95% {
+                transform: translateX(10px);
+            }
+        }
+
+        /* ── LION sitting on top of card ───────────────────────── */
+        .lion-wrap {
+            position: absolute;
+            top: -72px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 134px;
+            z-index: 20;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow:
+                0 0 0 4px rgba(180, 180, 180, 0.55),
+                0 0 0 8px rgba(120, 120, 120, 0.12),
+                0 14px 44px rgba(0, 0, 0, 0.85),
+                0 0 36px rgba(120, 120, 120, 0.2);
+            animation: lionBob 3.5s ease-in-out infinite;
+            user-select: none;
+            overflow: hidden;
+            /* Start grayscale */
+            filter: grayscale(1) brightness(0.88);
+            transition: filter 1.6s ease, box-shadow 1.6s ease;
+        }
+
+        /* Golden glow ring restored on color burst */
+        .lion-wrap.colorized {
+            filter: grayscale(0) brightness(1);
+            box-shadow:
+                0 0 0 4px rgba(255, 180, 40, 0.7),
+                0 0 0 8px rgba(255, 130, 0, 0.2),
+                0 14px 44px rgba(0, 0, 0, 0.85),
+                0 0 44px rgba(255, 200, 0, 0.45);
+        }
+
+        @keyframes lionBob {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-6px);
+            }
+        }
+
+        .lion-wrap img {
+            width: 112%;
+            height: 112%;
+            margin: -6%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Eye-tracking pupils overlaid on the lion */
+        .lion-eyes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Each pupil dot */
+        .pupil {
+            position: absolute;
+            width: 10px;
+            height: 13px;
+            background: radial-gradient(circle at 35% 35%, #3a3a3a, #000);
+            border-radius: 50%;
+            transition: transform 0.06s linear;
+        }
+
+        .pupil.L {
+            left: 33%;
+            top: 39%;
+        }
+
+        .pupil.R {
+            left: 54%;
+            top: 39%;
+        }
+
+        /* ── Speech bubble ─────────────────────────────────────── */
+        .lion-bubble {
+            position: absolute;
+            /* Float to the right of the lion, above the card */
+            top: -80px;
+            left: calc(50% + 78px);
+            z-index: 21;
+            width: 210px;
+            padding: 10px 15px 11px;
+            background: rgba(8, 12, 26, 0.88);
+            border: 1px solid rgba(0, 210, 255, 0.28);
+            border-radius: 18px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            text-align: left;
+            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(0, 210, 255, 0.1);
+        }
+
+        /* Left-pointing triangle — arrow points toward the lion */
+        .lion-bubble::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -8px;
+            transform: translateY(-50%);
+            border-width: 8px 8px 8px 0;
+            border-style: solid;
+            border-color: transparent rgba(0, 210, 255, 0.28) transparent transparent;
+        }
+
+        .bubble-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(200, 230, 255, 0.88);
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+            display: block;
+            /* fade-in/out controlled by JS */
+            transition: opacity 0.45s ease;
+        }
+
+        /* Color-burst ring flash on colorize */
+        @keyframes colorBurst {
+            0% {
+                box-shadow: 0 0 0 0px rgba(255, 210, 0, 0.9), 0 0 0 0px rgba(255, 80, 180, 0.7), 0 0 0 0px rgba(0, 210, 255, 0.6);
+            }
+
+            40% {
+                box-shadow: 0 0 0 35px rgba(255, 210, 0, 0.3), 0 0 0 60px rgba(255, 80, 180, 0.15), 0 0 0 90px rgba(0, 210, 255, 0.08);
+            }
+
+            100% {
+                box-shadow: 0 0 0 35px rgba(255, 210, 0, 0), 0 0 0 60px rgba(255, 80, 180, 0), 0 0 0 90px rgba(0, 210, 255, 0);
+            }
+        }
+
+        .lion-wrap.burst {
+            animation: lionBob 3.5s ease-in-out infinite, colorBurst 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* ── Flash messages ─────────────────────────────────────── */
+        .flash {
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flash.error {
+            background: rgba(255, 50, 70, 0.12);
+            border: 1px solid rgba(255, 50, 70, 0.3);
+            color: #ff8a95;
+        }
+
+        .flash.success {
+            background: rgba(0, 220, 120, 0.1);
+            border: 1px solid rgba(0, 220, 120, 0.3);
+            color: #60ffa0;
+        }
+
+        /* ── Chip ────────────────────────────────────────────────── */
+        .chip {
+            display: block;
+            font-family: 'Orbitron', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            color: #c9973a;
+            margin-bottom: 16px;
+            background: none;
+            border: none;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .chip::before {
+            display: none;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.2
+            }
+        }
+
+        /* ── Title ──────────────────────────────────────────────── */
+        .card-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 46px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            line-height: 1.05;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: rgba(200, 215, 230, 0.5);
+            margin-bottom: 34px;
+            line-height: 1.6;
+            font-style: normal;
+        }
+
+        /* ── Form ──────────────────────────────────────────────── */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .field label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(180, 200, 220, 0.5);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 210, 255, 0.35);
+            pointer-events: none;
+            display: flex;
+            transition: color 0.25s;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 17px 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 14px;
+            color: #e8f4ff;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.25s, background 0.25s, box-shadow 0.3s;
+            letter-spacing: 0.2px;
+            box-sizing: border-box;
+        }
+
+        input::placeholder {
+            color: rgba(232, 244, 255, 0.28);
+            font-weight: 400;
+        }
+
+        input:hover {
+            border-color: rgba(201, 151, 58, 0.3);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        input:focus {
+            border-color: rgba(201, 151, 58, 0.6);
+            background: rgba(201, 151, 58, 0.05);
+            box-shadow:
+                0 0 0 3px rgba(201, 151, 58, 0.1),
+                0 4px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-wrap:focus-within .field-icon {
+            color: #00d4ff;
+        }
+
+        /* password eye toggle */
+        .pw-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            transition: color 0.2s;
+        }
+
+        .pw-toggle:hover {
+            color: rgba(0, 210, 255, 0.7);
+        }
+
+        /* ── Submit ──────────────────────────────────────────────── */
+        .auth-btn {
+            position: relative;
+            width: 100%;
+            padding: 18px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #c9973a, #e8b84b);
+            border: none;
+            border-radius: 14px;
+            color: #1a0f00;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 22px rgba(201, 151, 58, 0.3);
+        }
+
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #e8b84b, #f5cc5f);
+            opacity: 0;
+            transition: opacity 0.28s;
+        }
+
+        .auth-btn:hover::before {
+            opacity: 1;
+        }
+
+        .auth-btn:hover {
+            box-shadow: 0 8px 34px rgba(201, 151, 58, 0.5), 0 2px 10px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+            color: #0e0800;
+        }
+
+        /* shimmer */
+        .auth-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+
+        .auth-btn:hover::after {
+            transition: left 0.55s;
+            left: 160%;
+        }
+
+        .btn-arrow {
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-btn:hover .btn-arrow {
+            transform: translateX(5px);
+        }
+
+        /* ── Divider line ───────────────────────────────────────── */
+        .card-foot {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .card-foot .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+        }
+
+        .foot-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 7.5px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+        }
+
+        /* ── TRANSITION OVERLAY (5-layer colour swipe) ─────────── */
+        #mottoScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 9990;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #mottoScreen.active {
+            pointer-events: all;
+        }
+
+        .trans-layer {
+            position: absolute;
+            inset: 0;
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        /* Sweep IN (left to right) */
+        .trans-1 {
+            background: #06060a;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0s;
+        }
+
+        .trans-2 {
+            background: #00dcff;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+        }
+
+        .trans-3 {
+            background: #ff50c8;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.2s;
+        }
+
+        .trans-4 {
+            background: #ffbe0b;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.3s;
+        }
+
+        .trans-5 {
+            background: #050714;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.4s;
+        }
+
+        #mottoScreen.active .trans-layer {
+            transform: scaleX(1);
+        }
+
+        /* Sweep OUT (right to left) */
+        #mottoScreen.trans-exit .trans-1 {
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.4s;
+        }
+
+        #mottoScreen.trans-exit .trans-2 {
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.3s;
+        }
+
+        #mottoScreen.trans-exit .trans-3 {
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.2s;
+        }
+
+        #mottoScreen.trans-exit .trans-4 {
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+        }
+
+        #mottoScreen.trans-exit .trans-5 {
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0s;
+        }
+
+        /* ── Aurora orbs inside the dark background ─────────────── */
+        @keyframes orbFloat1 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(60px, -80px) scale(1.15);
+            }
+
+            66% {
+                transform: translate(-40px, 50px) scale(0.9);
+            }
+        }
+
+        @keyframes orbFloat2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            40% {
+                transform: translate(-70px, 60px) scale(1.2);
+            }
+
+            70% {
+                transform: translate(50px, -40px) scale(0.85);
+            }
+        }
+
+        @keyframes orbFloat3 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(80px, 50px) scale(1.1);
+            }
+        }
+
+        @keyframes shimmerText {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: scale(0.85);
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes starTwinkle {
+
+            0%,
+            100% {
+                opacity: 0.15;
+            }
+
+            50% {
+                opacity: 0.9;
+            }
+        }
+
+        .trans-orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: blur(80px);
+            opacity: 0;
+            transition: opacity 0.6s ease 0.9s;
+        }
+
+        #mottoScreen.active .trans-orb {
+            opacity: 1;
+        }
+
+        .trans-orb-1 {
+            width: 520px;
+            height: 520px;
+            background: radial-gradient(circle, rgba(0, 220, 255, 0.55) 0%, transparent 70%);
+            top: -140px;
+            left: -120px;
+            animation: orbFloat1 6s ease-in-out infinite;
+        }
+
+        .trans-orb-2 {
+            width: 460px;
+            height: 460px;
+            background: radial-gradient(circle, rgba(255, 60, 220, 0.5) 0%, transparent 70%);
+            bottom: -120px;
+            right: -100px;
+            animation: orbFloat2 7s ease-in-out infinite;
+        }
+
+        .trans-orb-3 {
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(255, 190, 0, 0.45) 0%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: orbFloat3 8s ease-in-out infinite;
+        }
+
+        .trans-pulse-ring {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+            margin-top: -170px;
+            margin-left: -170px;
+            animation: pulseRing 3.2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .trans-pulse-ring-2 {
+            width: 500px;
+            height: 500px;
+            border-color: rgba(0, 220, 255, 0.06);
+            margin-top: -250px;
+            margin-left: -250px;
+            animation-delay: 1s;
+        }
+
+        /* Message shown while bands are fully covering the screen */
+        #transMessage {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.88);
+            transition: opacity 0.5s 0.7s, transform 0.5s 0.7s;
+        }
+
+        #mottoScreen.active #transMessage {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #transMessage h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(30px, 4.5vw, 52px);
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #00dcff, #ff50c8, #ffbe0b, #00ff88, #00dcff);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerText 2.2s linear infinite;
+            text-shadow: none;
+            filter:
+                drop-shadow(0 0 8px rgba(0, 220, 255, 0.9)) drop-shadow(0 0 22px rgba(255, 80, 200, 0.65)) drop-shadow(0 0 48px rgba(255, 190, 0, 0.45));
+        }
+
+        #transMessage .sub-line {
+            font-family: 'Orbitron', monospace;
+            font-size: 10px;
+            letter-spacing: 5px;
+            color: rgba(200, 230, 255, 0.45);
+            margin-top: 16px;
+            text-transform: uppercase;
+            display: block;
+        }
+
+        #transMessage .color-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        #transMessage .color-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: starTwinkle 1.4s ease-in-out infinite;
+        }
+
+        #transMessage .color-dots span:nth-child(1) {
+            background: #00dcff;
+            animation-delay: 0s;
+        }
+
+        #transMessage .color-dots span:nth-child(2) {
+            background: #ff50c8;
+            animation-delay: 0.2s;
+        }
+
+        #transMessage .color-dots span:nth-child(3) {
+            background: #ffbe0b;
+            animation-delay: 0.4s;
+        }
+
+        #transMessage .color-dots span:nth-child(4) {
+            background: #00ff88;
+            animation-delay: 0.6s;
+        }
+
+        #transMessage .color-dots span:nth-child(5) {
+            background: #a855f7;
+            animation-delay: 0.8s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background: grayscale left / colorized right -->
+    <div id="bg">
+        <div id="bg-left"></div>
+        <div id="bg-right"></div>
+    </div>
+    <div id="divider"></div>
+    <canvas id="tubes-canvas"></canvas>
+
+    <!-- Corner labels -->
+    <div class="bg-label bw">Monochrome</div>
+    <div class="bg-label color">Colorized</div>
+
+    <!-- Main page -->
+    <div class="page">
+        <div class="card" id="loginCard">
+
+            <!-- Lion sitting on top of card (starts grayscale) -->
+            <div class="lion-wrap" id="lionWrap">
+                <img src="{{ url_for('static', filename='images/lion.png') }}" alt="Lion mascot" draggable="false">
+                <!-- Eye-tracking pupils -->
+                <div class="lion-eyes">
+                    <div class="pupil L" id="pupilL"></div>
+                    <div class="pupil R" id="pupilR"></div>
+                </div>
+            </div>
+
+            <!-- Speech bubble below lion -->
+            <div class="lion-bubble" id="lionBubble">
+                <span class="bubble-text" id="bubbleText"></span>
+            </div>
+
+            <!-- Flask flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">
+                {% if category == 'error' %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                {% else %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                {% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="chip">Cognitive Visual Restoration</div>
+
+            <h1 class="card-title">Welcome Back</h1>
+            <p class="card-subtitle">Access your restoration workspace</p>
+
+            <form method="POST" action="{{ url_for('login') }}" id="loginForm" novalidate>
+
+                <!-- Username -->
+                <div class="field">
+                    <label for="username">Username</label>
+                    <div class="input-wrap">
+                        <input type="text" id="username" name="username" placeholder="Enter your username"
+                            autocomplete="username" required>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <input type="password" id="password" name="password" placeholder="Enter your password"
+                            autocomplete="current-password" required>
+                        <button type="button" class="pw-toggle" id="pwToggle" aria-label="Toggle password">
+                            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="authBtn">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <div class="card-foot">
+                <div class="line"></div>
+                <span class="foot-label">CVR Project · Secure Access Portal</span>
+                <div class="line"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ── Eye tracking ───────────────────────────────────────
+        const lionWrap = document.getElementById('lionWrap');
+        const pupilL = document.getElementById('pupilL');
+        const pupilR = document.getElementById('pupilR');
+        const MAX_OFFSET = 3.5;
+
+        function trackEyes(cx, cy) {
+            [
+                { el: pupilL, ax: 0.37, ay: 0.43 },
+                { el: pupilR, ax: 0.58, ay: 0.43 }
+            ].forEach(({ el, ax, ay }) => {
+                const rect = lionWrap.getBoundingClientRect();
+                const ex = rect.left + rect.width * ax;
+                const ey = rect.top + rect.height * ay;
+                const dx = cx - ex, dy = cy - ey;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const f = Math.min(dist, 60) / 60;
+                el.style.transform = `translate(${(dx / dist) * MAX_OFFSET * f}px, ${(dy / dist) * MAX_OFFSET * f}px)`;
+            });
+        }
+        document.addEventListener('mousemove', e => trackEyes(e.clientX, e.clientY));
+        document.addEventListener('touchmove', e => trackEyes(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+
+        // ── Text cycling (all at once, fade in/out) ──────────────
+        const bubbleText = document.getElementById('bubbleText');
+        let cycleTimer = null;
+
+        function showText(text) {
+            bubbleText.style.opacity = '0';
+            clearTimeout(cycleTimer);
+            // After fade-out completes, swap text and fade back in
+            cycleTimer = setTimeout(() => {
+                bubbleText.textContent = text;
+                bubbleText.style.opacity = '1';
+            }, 460);
+        }
+
+        // Sad messages cycle every 2.4 s
+        const sadLines = [
+            "I'm lost in grey... please log me in! 🐾",
+            "Give me my colors back!",
+
+        ];
+        let sadIdx = 0;
+        let sadInterval = null;
+
+        function startSadCycle() {
+            showText(sadLines[0]);
+            sadIdx = 1;
+            sadInterval = setInterval(() => {
+                showText(sadLines[sadIdx % sadLines.length]);
+                sadIdx++;
+            }, 2600);
+        }
+
+        function stopSadCycle() {
+            clearInterval(sadInterval);
+            clearTimeout(cycleTimer);
+        }
+
+        // Start immediately
+        setTimeout(startSadCycle, 300);
+
+        // ── AJAX Login ─────────────────────────────────────────
+        const loginForm = document.getElementById('loginForm');
+        const card = document.getElementById('loginCard');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+
+            // Empty field shake
+            if (!u || !p) {
+                card.classList.remove('shake');
+                void card.offsetWidth;
+                card.classList.add('shake');
+                card.addEventListener('animationend', () => card.classList.remove('shake'), { once: true });
+                return;
+            }
+
+            // Submit via fetch
+            const fd = new FormData(loginForm);
+            let res;
+            try {
+                res = await fetch('/login', { method: 'POST', body: fd, redirect: 'follow' });
+            } catch (_) {
+                loginForm.submit(); return; // fallback
+            }
+
+            const wasRedirected = res.url && (res.url.includes('/home') || res.url.endsWith('/'));
+
+            if (wasRedirected) {
+                // ── SUCCESS: colorize the lion! ─────────────────
+                stopSadCycle();
+
+                // Swap bubble to happy message immediately
+                showText("YES! My colors are back! ✨ Thank you!");
+
+                // Color burst starts slightly after bubble swap
+                setTimeout(() => {
+                    lionWrap.classList.add('colorized');
+                    lionWrap.classList.add('burst');
+                    spawnConfetti();
+                }, 460);
+
+                // Show motto screen then redirect
+                setTimeout(() => { showMottoScreen(res.url); }, 2400);
+
+            } else {
+                // ── FAILURE: shake + error message ──────────────
+                card.classList.remove('shake');
+                void card.offsetWidth;
+                card.classList.add('shake');
+                card.addEventListener('animationend', () => card.classList.remove('shake'), { once: true });
+
+                stopSadCycle();
+                showText("Hmm... that doesn\'t look right 😢 Try again!");
+                // Resume sad cycle after 3s
+                setTimeout(startSadCycle, 3200);
+            }
+        });
+
+        // ── 5-LAYER SWIPE TRANSITION ────────────────────────────
+        function showMottoScreen(redirectUrl) {
+            const overlay = document.getElementById('mottoScreen');
+
+            // Step 1 – bands sweep IN from left
+            overlay.classList.add('active');
+
+            // Step 2 – wait for bands to fully cover (~0.9s) + 2s display time, then redirect
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 3000);
+        }
+
+        // ── Mini confetti burst ────────────────────────────────
+        function spawnConfetti() {
+            const colors = ['#ff0', '#f0f', '#0ff', '#f60', '#0f8', '#88f'];
+            for (let i = 0; i < 36; i++) {
+                const dot = document.createElement('div');
+                const angle = Math.random() * 360;
+                const dist = 80 + Math.random() * 120;
+                const size = 5 + Math.random() * 6;
+                dot.style.cssText = `
+                    position:fixed;
+                    width:${size}px; height:${size}px;
+                    border-radius:${Math.random() > 0.5 ? '50%' : '2px'};
+                    background:${colors[Math.floor(Math.random() * colors.length)]};
+                    pointer-events:none; z-index:9999;
+                    left:50%; top:40%;
+                    transition: transform ${0.6 + Math.random() * 0.7}s ease-out, opacity 0.8s ease-out;
+                    opacity:1;
+                `;
+                document.body.appendChild(dot);
+                setTimeout(() => {
+                    const rad = angle * Math.PI / 180;
+                    dot.style.transform = `translate(${Math.cos(rad) * dist}px, ${Math.sin(rad) * dist - 40}px) rotate(${Math.random() * 360}deg)`;
+                    dot.style.opacity = '0';
+                }, 30);
+                setTimeout(() => dot.remove(), 1500);
+            }
+        }
+
+        // ── Password toggle ─────────────────────────────────────
+        const pwToggle = document.getElementById('pwToggle');
+        const pwInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        pwToggle.addEventListener('click', () => {
+            const show = pwInput.type === 'password';
+            pwInput.type = show ? 'text' : 'password';
+            eyeIcon.innerHTML = show
+                ? '<path d="M17.94 17.94A10.99 10.99 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        });
+
+        // Auto-remove flash after 4s
+        document.querySelectorAll('.flash').forEach(el => {
+            setTimeout(() => el.style.transition = 'opacity 0.5s', 3500);
+            setTimeout(() => el.style.opacity = '0', 4000);
+            setTimeout(() => el.remove(), 4500);
+        });
+
+    </script>
+
+    <!-- ── TUBES CURSOR (WebGL animated 3D tubes) ─────────────── -->
+    <script type="module">
+        import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+
+        const tubesApp = TubesCursor(document.getElementById('tubes-canvas'), {
+            tubes: {
+                colors: ["#00d4ff", "#ff50c8", "#ffbe0b"],
+                lights: {
+                    intensity: 180,
+                    colors: ["#00dcff", "#ff3cc8", "#ffd000", "#60aed5"]
+                }
+            }
+        });
+
+        // Click to randomize tube colors
+        document.body.addEventListener('click', () => {
+            tubesApp.tubes.setColors(randomTubeColors(3));
+            tubesApp.tubes.setLightsColors(randomTubeColors(4));
+        });
+
+        function randomTubeColors(count) {
+            return new Array(count).fill(0).map(() =>
+                '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')
+            );
+        }
+    </script>
+
+    <!-- ── 5-LAYER SWIPE TRANSITION OVERLAY ─────────────────── -->
+    <div id="mottoScreen">
+        <div class="trans-layer trans-1"></div>
+        <div class="trans-layer trans-2"></div>
+        <div class="trans-layer trans-3"></div>
+        <div class="trans-layer trans-4"></div>
+        <div class="trans-layer trans-5"></div>
+        <!-- Aurora orbs (visible only on trans-5 dark layer) -->
+        <div class="trans-orb trans-orb-1"></div>
+        <div class="trans-orb trans-orb-2"></div>
+        <div class="trans-orb trans-orb-3"></div>
+        <div class="trans-pulse-ring"></div>
+        <div class="trans-pulse-ring trans-pulse-ring-2"></div>
+        <div id="transMessage">
+            <h2>Vision Restored</h2>
+            <div class="color-dots">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <span class="sub-line">Entering your workspace&hellip;</span>
+        </div>
+    </div>
+
+</body>
+
+</html>

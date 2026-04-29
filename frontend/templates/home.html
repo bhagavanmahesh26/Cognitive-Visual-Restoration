@@ -1,0 +1,664 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Cognitive Visual Restoration{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <!-- Ambient floating orbs -->
+    <div class="hero-orbs">
+        <div class="hero-orb o1"></div>
+        <div class="hero-orb o2"></div>
+        <div class="hero-orb o3"></div>
+    </div>
+    <h1 class="home-heading-enhance">Cognitive Visual Restoration</h1>
+    <p class="hero-subtitle">Transform <span class="hs-muted">Monochrome
+            Imagery</span> into <span class="hs-color">Vibrant Color</span> using state-of-the-art <span
+            class="hs-ai">Deep Learning
+            Technology</span></p>
+</div>
+
+<div class="container">
+    <!-- Upload Section - MOVED TO TOP -->
+    <section class="upload-section">
+        <div class="upload-demo">
+            <div class="comparison-slider">
+                <div class="comparison-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
+                        alt="After - Colorized" class="comparison-before">
+                    <div class="comparison-after-wrapper" id="afterWrapper">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&sat=-100"
+                            alt="Before - Black and White" class="comparison-after">
+                    </div>
+                </div>
+                <div class="comparison-handle" id="comparisonHandle">
+                    <div class="handle-line"></div>
+                    <div class="handle-circle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" />
+                            <path d="M9 19l7-7-7-7" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="comparison-label comparison-label-before">Before</div>
+                <div class="comparison-label comparison-label-after">After</div>
+            </div>
+        </div>
+
+        <div class="upload-card-v2">
+            <!-- Aurora animated border -->
+            <div class="uc2-aurora"></div>
+            <!-- Background grid texture -->
+            <div class="uc2-grid"></div>
+            <!-- Floating particles -->
+            <div class="uc2-particle p1"></div>
+            <div class="uc2-particle p2"></div>
+            <div class="uc2-particle p3"></div>
+            <div class="uc2-particle p4"></div>
+            <div class="uc2-particle p5"></div>
+
+            <div class="uc2-inner">
+                <!-- Title area -->
+                <div class="uc2-header">
+                    <div class="uc2-badge">
+                        <span class="uc2-badge-dot"></span>
+                        AI-Powered Colorization
+                    </div>
+                    <h2 class="uc2-title">
+                        <span class="uc2-title-line1">Color</span>
+                        <span class="uc2-title-line2">Restoration</span>
+                    </h2>
+                    <p class="uc2-subtitle">Transform your grayscale images into vivid, lifelike color in seconds</p>
+                </div>
+
+                <!-- Portal Drop Zone -->
+                <form id="upload-form" method="POST" enctype="multipart/form-data">
+                    <div id="upload-area" class="uc2-dropzone">
+                        <!-- Three spinning rings -->
+                        <div class="uc2-ring ring-outer"></div>
+                        <div class="uc2-ring ring-mid"></div>
+                        <div class="uc2-ring ring-inner"></div>
+                        <!-- Center portal icon -->
+                        <div class="uc2-portal-center">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#portalGrad)"
+                                stroke-width="1.6">
+                                <defs>
+                                    <linearGradient id="portalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#22d3ee" />
+                                        <stop offset="50%" stop-color="#a855f7" />
+                                        <stop offset="100%" stop-color="#ec4899" />
+                                    </linearGradient>
+                                </defs>
+                                <polyline points="16 16 12 12 8 16" />
+                                <line x1="12" y1="12" x2="12" y2="21" />
+                                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                            </svg>
+                        </div>
+                        <!-- Drop text -->
+                        <p class="uc2-drop-text">Drop image here</p>
+                        <input type="file" id="image-input" name="image" accept="image/*" style="display:none;">
+                    </div>
+
+                    <!-- CTA Button -->
+                    <button type="button" class="uc2-btn" id="browseBtn">
+                        <span class="uc2-btn-shine"></span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <span>Choose Image to Colorize</span>
+                    </button>
+
+                    <!-- Format chips row -->
+                    <div class="uc2-formats">
+                        <span class="uc2-fmt">JPG</span>
+                        <div class="uc2-fmt-sep"></div>
+                        <span class="uc2-fmt">PNG</span>
+                        <div class="uc2-fmt-sep"></div>
+                        <span class="uc2-fmt">WEBP</span>
+                        <div class="uc2-fmt-sep"></div>
+                        <span class="uc2-fmt">BMP</span>
+                        <div class="uc2-fmt-sep"></div>
+                        <span class="uc2-fmt-label">Max 16MB</span>
+                    </div>
+
+                    <div id="preview-container" class="image-preview-new" style="display: none;">
+                        <img id="preview-image" src="" alt="Preview">
+                        <div class="preview-actions">
+                            <button type="submit" class="btn-enhance">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                                </svg>
+                                Enhance Image
+                            </button>
+                            <button type="button" class="btn-reset" id="resetBtn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="1 4 1 10 7 10" />
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                                </svg>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if uploaded_image %}
+                    <div class="upload-success" id="upload-success-block">
+                        <h4>✓ Successfully Uploaded</h4>
+                        <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded Image">
+                        <div class="success-actions">
+                            <button type="submit" class="btn-primary">Process Image</button>
+                            <a href="{{ url_for('home') }}" class="btn-secondary">Upload Another</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Before/After Comparison Section with Steps -->
+    <section class="comparison-section">
+        <div class="comparison-container">
+            <div class="demo-comparison">
+                <img src="{{ url_for('static', filename='images/demo_before.png') }}" alt="Before" class="demo-before">
+                <div class="demo-divider"></div>
+                <img src="{{ url_for('static', filename='images/demo_after.png') }}" alt="After" class="demo-after">
+            </div>
+            <div class="demo-labels">
+                <span class="demo-label">Before</span>
+                <span class="demo-label">After</span>
+            </div>
+        </div>
+
+        <div class="steps-container">
+            <h2>How to colorize your images</h2>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">Upload your black &amp; white photo</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">AI colorization in progress</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Preview colorized result</strong><br>
+                        <span class="step-description">Review the AI-generated colors and adjustments.</span>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">Download restored image</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-v2-section">
+        <!-- Section headline -->
+        <div class="stats-v2-header">
+            <span class="stats-v2-eyebrow">By the numbers</span>
+            <h2 class="stats-v2-title">Transform history with <span class="stats-v2-highlight">AI
+                    colorization</span>
+            </h2>
+        </div>
+
+        <!-- Stats banner -->
+        <div class="stats-v2-banner">
+            <!-- Particle dots -->
+            <div class="sv2-dot d1"></div>
+            <div class="sv2-dot d2"></div>
+            <div class="sv2-dot d3"></div>
+
+            <div class="stats-v2-grid">
+
+                <!-- Stat 1 -->
+                <div class="stat-v2 tilt-card">
+                    <div class="sv2-top-bar" style="--bar-color: #22d3ee;"></div>
+                    <div class="sv2-icon-pill"
+                        style="--pill-bg: rgba(34,211,238,0.12); --pill-border: rgba(34,211,238,0.35);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        </svg>
+                    </div>
+                    <div class="sv2-number" style="--num-gradient: linear-gradient(135deg, #22d3ee, #7c3aed);">95%</div>
+                    <div class="sv2-label">Colorization accuracy</div>
+                    <div class="sv2-bar-track">
+                        <div class="sv2-bar-fill" style="--fill-color: #22d3ee; --fill-pct: 95%;"></div>
+                    </div>
+                </div>
+
+                <div class="sv2-separator"></div>
+
+                <!-- Stat 2 -->
+                <div class="stat-v2 tilt-card">
+                    <div class="sv2-top-bar" style="--bar-color: #f97316;"></div>
+                    <div class="sv2-icon-pill"
+                        style="--pill-bg: rgba(249,115,22,0.12); --pill-border: rgba(249,115,22,0.35);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                    </div>
+                    <div class="sv2-number" style="--num-gradient: linear-gradient(135deg, #fb923c, #ef4444);">3s</div>
+                    <div class="sv2-label">Average processing time</div>
+                    <div class="sv2-bar-track">
+                        <div class="sv2-bar-fill" style="--fill-color: #f97316; --fill-pct: 30%;"></div>
+                    </div>
+                </div>
+
+                <div class="sv2-separator"></div>
+
+                <!-- Stat 3 -->
+                <div class="stat-v2 tilt-card">
+                    <div class="sv2-top-bar" style="--bar-color: #a855f7;"></div>
+                    <div class="sv2-icon-pill"
+                        style="--pill-bg: rgba(168,85,247,0.12); --pill-border: rgba(168,85,247,0.35);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+                        </svg>
+                    </div>
+                    <div class="sv2-number" style="--num-gradient: linear-gradient(135deg, #a855f7, #ec4899);">313</div>
+                    <div class="sv2-label">ab Color Bins (LAB space)</div>
+                    <div class="sv2-bar-track">
+                        <div class="sv2-bar-fill" style="--fill-color: #a855f7; --fill-pct: 80%;"></div>
+                    </div>
+                </div>
+
+                <div class="sv2-separator"></div>
+
+                <!-- Stat 4 -->
+                <div class="stat-v2 tilt-card">
+                    <div class="sv2-top-bar" style="--bar-color: #ec4899;"></div>
+                    <div class="sv2-icon-pill"
+                        style="--pill-bg: rgba(236,72,153,0.12); --pill-border: rgba(236,72,153,0.35);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                            <polyline points="17 6 23 6 23 12" />
+                        </svg>
+                    </div>
+                    <div class="sv2-number" style="--num-gradient: linear-gradient(135deg, #ec4899, #f97316);">90%</div>
+                    <div class="sv2-label">Time saved vs manual colorization</div>
+                    <div class="sv2-bar-track">
+                        <div class="sv2-bar-fill" style="--fill-color: #ec4899; --fill-pct: 90%;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Video Demo Section -->
+    <section class="video-demo-section">
+        <div class="video-demo-content">
+            <div class="video-demo-text">
+                <h2>Colorize black &amp; white photos in seconds</h2>
+                <p>Improve brightness, boost color, and restore historical images automatically. With just one click,
+                    our AI colorization engine brings out natural vibrance and clarity. No manual adjustments required.
+                </p>
+                <p>The intuitive interface guides you through seamless colorization that takes seconds, not hours.
+                    Designed for ease of use, it's ideal for portraits, historical photos, or landscapes, ensuring
+                    consistent, polished outcomes every time.</p>
+                <div class="video-demo-features">
+                    <div class="demo-feature-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Automatic color prediction</span>
+                    </div>
+                    <div class="demo-feature-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Preserves original details</span>
+                    </div>
+                    <div class="demo-feature-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Lightning-fast processing</span>
+                    </div>
+                </div>
+            </div>
+            <div class="video-demo-player">
+                <div class="animated-demo">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=500&fit=crop&auto=format&sat=-100"
+                        alt="Before - Black and White" class="demo-image demo-before-img">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=500&fit=crop&auto=format"
+                        alt="After - Colorized" class="demo-image demo-after-img">
+                    <div class="demo-wipe-line"></div>
+                    <div class="demo-label demo-label-before">Before</div>
+                    <div class="demo-label demo-label-after">After</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capabilities Showcase Section -->
+    <section class="capabilities-section">
+        <div class="capabilities-header">
+            <span class="cap-eyebrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                What we can do
+            </span>
+            <h2 class="cap-title">
+                Everything you need to<br>
+                <span class="cap-title-accent">colorize &amp; enhance images</span>
+            </h2>
+            <p class="cap-subtitle">Easily improve your photos with an AI Image Colorizer that sharpens details, reduces
+                noise, and boosts resolution for impressive, high-quality results.</p>
+        </div>
+
+        <div class="capabilities-grid">
+
+            <!-- Card 1 -->
+            <div class="capability-card">
+                <div class="cap-card-tag" style="--tag-color:#22d3ee;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M20 21a8 8 0 1 0-16 0" />
+                    </svg>
+                    Portraits
+                </div>
+                <div class="capability-image capability-slider-container">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&auto=format"
+                        alt="After - Colorized" class="capability-after-img">
+                    <div class="capability-before-wrapper">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&auto=format&sat=-100"
+                            alt="Before - Black and White" class="capability-before-img">
+                    </div>
+                    <div class="cap-label cap-label-before">B&W</div>
+                    <div class="cap-label cap-label-after">Color</div>
+                    <div class="capability-slider-handle">
+                        <div class="slider-line"></div>
+                        <div class="slider-circle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M15 19l-7-7 7-7" stroke="white" stroke-width="2.5" />
+                                <path d="M9 19l7-7-7-7" stroke="white" stroke-width="2.5" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="cap-card-body">
+                    <h3 class="cap-card-title">Colorize portraits</h3>
+                    <p class="cap-card-desc">Transform black and white portraits into vibrant color with AI-powered
+                        <span class="highlight-text">portrait colorization</span>.
+                    </p>
+                    <a href="#" class="cap-card-cta">Try it <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg></a>
+                </div>
+            </div>
+
+            <!-- Card 2 — featured/larger -->
+            <div class="capability-card capability-card--featured">
+                <div class="cap-card-tag" style="--tag-color:#a855f7;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M3 3h7l2 4-3 2a11 11 0 0 0 5 5l2-3 4 2v7a2 2 0 0 1-2 2C9 21 3 15 3 5a2 2 0 0 1 2-2z" />
+                    </svg>
+                    Landscapes
+                </div>
+                <div class="capability-image capability-slider-container">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format"
+                        alt="After - Colorized" class="capability-after-img">
+                    <div class="capability-before-wrapper">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format&sat=-100"
+                            alt="Before - Black and White" class="capability-before-img">
+                    </div>
+                    <div class="cap-label cap-label-before">B&W</div>
+                    <div class="cap-label cap-label-after">Color</div>
+                    <div class="capability-slider-handle">
+                        <div class="slider-line"></div>
+                        <div class="slider-circle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M15 19l-7-7 7-7" stroke="white" stroke-width="2.5" />
+                                <path d="M9 19l7-7-7-7" stroke="white" stroke-width="2.5" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="cap-card-body">
+                    <h3 class="cap-card-title">Colorize landscapes</h3>
+                    <p class="cap-card-desc">Bring nature scenes to life with realistic <span
+                            class="highlight-text">landscape colorization</span> for stunning outdoor photography.</p>
+                    <a href="#" class="cap-card-cta">Try it <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg></a>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="capability-card">
+                <div class="cap-card-tag" style="--tag-color:#ec4899;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Memories
+                </div>
+                <div class="capability-image capability-slider-container">
+                    <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400&h=300&fit=crop&auto=format"
+                        alt="After - Colorized" class="capability-after-img">
+                    <div class="capability-before-wrapper">
+                        <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400&h=300&fit=crop&auto=format&sat=-100"
+                            alt="Before - Black and White" class="capability-before-img">
+                    </div>
+                    <div class="cap-label cap-label-before">B&W</div>
+                    <div class="cap-label cap-label-after">Color</div>
+                    <div class="capability-slider-handle">
+                        <div class="slider-line"></div>
+                        <div class="slider-circle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M15 19l-7-7 7-7" stroke="white" stroke-width="2.5" />
+                                <path d="M9 19l7-7-7-7" stroke="white" stroke-width="2.5" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="cap-card-body">
+                    <h3 class="cap-card-title">Colorize family memories</h3>
+                    <p class="cap-card-desc">Preserve precious moments with <span class="highlight-text">family photo
+                            colorization</span> for cherished keepsakes.</p>
+                    <a href="#" class="cap-card-cta">Try it <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg></a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <lottie-player src="{{ url_for('static', filename='lottie/neural_network.json') }}"
+                        background="transparent" speed="1" style="width: 80px; height: 80px;" loop autoplay>
+                    </lottie-player>
+                </div>
+                <h3>Deep Learning Colorization</h3>
+                <p>Our advanced CNN-based model is trained on thousands of images to predict realistic and historically
+                    accurate colors for black and white photographs.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <lottie-player src="{{ url_for('static', filename='lottie/accuracy.json') }}"
+                        background="transparent" speed="1" style="width: 80px; height: 80px;" loop autoplay>
+                    </lottie-player>
+                </div>
+                <h3>Automatic Color Prediction</h3>
+                <p>The AI analyzes image context, objects, and patterns to intelligently predict natural color palettes
+                    without manual intervention.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <lottie-player src="{{ url_for('static', filename='lottie/image_enhance.json') }}"
+                        background="transparent" speed="1" style="width: 80px; height: 80px;" loop autoplay>
+                    </lottie-player>
+                </div>
+                <h3>Preserve Image Details</h3>
+                <p>Our colorization process maintains the original image quality, preserving fine details, textures, and
+                    contrast while adding vibrant colors.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+
+
+
+    // ── 3. Stat Counter-Up Animation ──────────────────────────
+    (function () {
+        function animateCount(el, target, suffix, duration) {
+            const start = performance.now();
+            const isFloat = target % 1 !== 0;
+            function step(now) {
+                const p = Math.min((now - start) / duration, 1);
+                const ease = 1 - Math.pow(1 - p, 3);
+                const val = isFloat ? (ease * target).toFixed(1) : Math.round(ease * target);
+                el.textContent = val + suffix;
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        const statsMap = [
+            { sel: '.stat-v2:nth-child(1) .sv2-number', target: 95, suffix: '%' },
+            { sel: '.stat-v2:nth-child(3) .sv2-number', target: 3, suffix: 's' },
+            { sel: '.stat-v2:nth-child(5) .sv2-number', target: 313, suffix: '' },
+            { sel: '.stat-v2:nth-child(7) .sv2-number', target: 90, suffix: '%' },
+        ];
+
+        const banner = document.querySelector('.stats-v2-banner');
+        if (!banner) return;
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    statsMap.forEach(({ sel, target, suffix }) => {
+                        const el = document.querySelector(sel);
+                        if (el) animateCount(el, target, suffix, 1600);
+                    });
+                    io.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+        io.observe(banner);
+    })();
+
+    // ── 4. 3D Mouse-Tilt on cards ────────────────────────────
+    (function () {
+        document.querySelectorAll('.tilt-card, .feature-card, .capability-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const x = e.clientX - r.left;
+                const y = e.clientY - r.top;
+                const cx = r.width / 2;
+                const cy = r.height / 2;
+                const rotX = ((y - cy) / cy) * -8;
+                const rotY = ((x - cx) / cx) * 8;
+                card.style.transform = `perspective(700px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.025)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+    })();
+
+    // ── 5. Ripple on uc2-btn ─────────────────────────────────
+    (function () {
+        document.querySelectorAll('.uc2-btn, .btn-enhance').forEach(btn => {
+            btn.classList.add('ripple-host');
+            btn.addEventListener('click', e => {
+                const r = btn.getBoundingClientRect();
+                const size = Math.max(r.width, r.height);
+                const x = e.clientX - r.left - size / 2;
+                const y = e.clientY - r.top - size / 2;
+                const wave = document.createElement('span');
+                wave.className = 'ripple-wave';
+                Object.assign(wave.style, {
+                    width: size + 'px', height: size + 'px',
+                    left: x + 'px', top: y + 'px'
+                });
+                btn.appendChild(wave);
+                wave.addEventListener('animationend', () => wave.remove());
+            });
+        });
+    })();
+
+
+    // Capability card slider functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        const sliderContainers = document.querySelectorAll('.capability-slider-container');
+
+        sliderContainers.forEach(container => {
+            const beforeWrapper = container.querySelector('.capability-before-wrapper');
+            const sliderHandle = container.querySelector('.capability-slider-handle');
+            let isDragging = false;
+
+            function updateSlider(e) {
+                const rect = container.getBoundingClientRect();
+                const x = (e.type.includes('mouse') ? e.clientX : e.touches[0].clientX) - rect.left;
+                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+
+                beforeWrapper.style.width = percentage + '%';
+                sliderHandle.style.left = percentage + '%';
+            }
+
+            function startDragging(e) {
+                isDragging = true;
+                updateSlider(e);
+                e.preventDefault();
+            }
+
+            function stopDragging() {
+                isDragging = false;
+            }
+
+            function onDrag(e) {
+                if (isDragging) {
+                    updateSlider(e);
+                }
+            }
+
+            // Mouse events
+            container.addEventListener('mousedown', startDragging);
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', stopDragging);
+
+            // Touch events for mobile
+            container.addEventListener('touchstart', startDragging);
+            document.addEventListener('touchmove', onDrag);
+            document.addEventListener('touchend', stopDragging);
+        });
+    });
+</script>
+
+{% endblock %}

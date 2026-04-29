@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cognitive Visual Restoration{% endblock %}</title>
+
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4">
+    <!-- Lottie player - served locally for offline support -->
+    <script src="{{ url_for('static', filename='js/lottie-player.js') }}"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <nav>
+        <div class="nav-container">
+            <!-- Left: Logo -->
+            <a href="{{ url_for('home') }}" class="logo">
+                CVR Engine
+            </a>
+
+            <!-- Mobile toggle -->
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <!-- Center: Main nav tabs -->
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" data-text="HOME">Home</a></li>
+                <li><a href="{{ url_for('scope') }}" data-text="SCOPE">Scope</a></li>
+                <li><a href="{{ url_for('team') }}" data-text="TEAM">Team</a></li>
+                <li><a href="{{ url_for('about') }}" data-text="ABOUT">About</a></li>
+            </ul>
+
+            <!-- Right: Logout + Dark mode -->
+            <div class="nav-right-actions">
+                <a href="{{ url_for('logout') }}" class="nav-logout">Logout</a>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Cognitive Visual Restoration Engine. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+            Powered by Deep Learning & Flask
+        </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
