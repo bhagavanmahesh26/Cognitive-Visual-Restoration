@@ -10,7 +10,7 @@ __pycache__/
 *.pyd
 
 # ML Model weights (too large for GitHub - 100MB limit)
-backend/models/
+backend/models/*.pth
 
 # Generated/uploaded files (runtime data, not source code)
 frontend/static/colorized/

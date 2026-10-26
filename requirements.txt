@@ -1,7 +1,8 @@
 Flask==3.0.0
 Werkzeug==3.0.1
-torch
-torchvision
+gunicorn==21.2.0
+torch==2.1.0
+torchvision==0.16.0
 scikit-image
 numpy
 matplotlib

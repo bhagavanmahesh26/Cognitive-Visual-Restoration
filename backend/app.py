@@ -25,7 +25,7 @@ app = Flask(
     template_folder=os.path.join(FRONTEND_DIR, 'templates'),
     static_folder=os.path.join(FRONTEND_DIR, 'static'),
 )
-app.secret_key = 'your-secret-key-change-in-production'
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['UPLOAD_FOLDER']    = os.path.join(FRONTEND_DIR, 'static', 'uploads')
 app.config['COLORIZED_FOLDER'] = os.path.join(FRONTEND_DIR, 'static', 'colorized')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB
